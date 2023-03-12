@@ -1,0 +1,1 @@
+/opt/rh/devtoolset-9/root/usr/bin/c++      CMakeFiles/dis.dir/main.cpp.o CMakeFiles/dis.dir/cpp/server.cpp.o CMakeFiles/dis.dir/cpp/worker.cpp.o CMakeFiles/dis.dir/cpp/Com.cpp.o CMakeFiles/dis.dir/cpp/scheduler.cpp.o CMakeFiles/dis.dir/cpp/Data.cpp.o CMakeFiles/dis.dir/cpp/nodes.cpp.o CMakeFiles/dis.dir/cpp/PostOffice.cpp.o  -o dis 
