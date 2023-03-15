@@ -2,12 +2,15 @@
 // Created by duyin on 2023/2/7.
 //
 
-#ifndef DIS_COM_H
-#define DIS_COM_H
-#define _GNU_SOURCE
+#ifndef DIS_COM_H 
+#define DIS_COM_H 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURC
+#endif // !_GNU_SOURCE
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <memory>
 #include <unordered_map>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -40,7 +43,17 @@ private:
     SOCKET recvSock;
 
 public:
-    Com(){}
+    Com() {
+        id = 0;
+        allocated = false;
+        memset(ip, 0, sizeof(ip)); //清空ip数组
+        memset(&sendAddr, 0, sizeof(sendAddr)); //清空sendAddr结构体
+        memset(&recvAddr, 0, sizeof(recvAddr)); //清空recvAddr结构体
+        sendSock = -1; //初始化sendSock为无效值
+        recvSock = -1; //初始化recvSock为无效值
+    }
+
+    Com(const Com& other); // 深拷贝构造函数声明
     static void init(const char *ip,const char *port); //initiate listen port
     void setSendAddr(char *Ip,char *Port); //set send addr
     bool sendSocket();//sendsocket

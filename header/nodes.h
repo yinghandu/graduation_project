@@ -11,7 +11,7 @@
 
 class nodes {
 protected:
-    PostOffice *post_office;
+    PostOffice *post_office=new PostOffice();
     std::unordered_map<int,std::pair<std::string,std::string>> __nodes;//node特有数据结构，保存与之联系的结点类型及ip
     Data *data;
 

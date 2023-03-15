@@ -8,6 +8,8 @@
 #include <cstring>
 #include <thread>
 
+const int maxCom = 10;
+
 class PostOffice
 {
 private:
@@ -15,7 +17,7 @@ private:
     bool rece_end = false;
     bool send_end = false;
     bool initiated = false;
-    std::vector<Com *> coms;
+    std::vector<std::unique_ptr<Com>> coms;
 
 public:
     PostOffice(){};

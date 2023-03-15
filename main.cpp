@@ -8,6 +8,8 @@ int main(int argc,char **argv) {
     dtmp->init();  //init()
     if(dtmp->getRole()=="scheduler")
         Scheduler(dtmp);//if role is scheduler ,carry out scheduler function
+    else if(dtmp->getRole()=="server")
+        Server(dtmp);//if role is server ,carry out server function
 
     return 0;
 }

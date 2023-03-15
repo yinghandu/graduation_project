@@ -3,20 +3,32 @@
 //
 
 #include "../header/Com.h"
+
 std::queue<std::pair<int,std::string>> mq;
 
 
 struct sockaddr_in Com::listenAddr;
 SOCKET Com::listenSock;
 
+Com::Com(const Com& other)
+{
+    std::strcpy(ip, other.ip);
+    id = other.id;
+    allocated = other.allocated;
+    std::memcpy(&sendAddr, &other.sendAddr, sizeof(sendAddr));
+    std::memcpy(&recvAddr, &other.recvAddr, sizeof(recvAddr));
+    listenSock = other.listenSock;
+}
+
 void Com::init(const char *ip,const char *port) {
     memset(&listenAddr, 0, sizeof(listenAddr));  //set 0
     listenSock = socket(AF_INET, SOCK_STREAM, 0);
     listenAddr.sin_family = AF_INET;  // use IPv4
     listenAddr.sin_addr.s_addr = inet_addr(ip);  //IPaddress
-    char *p;
+    char* p = (char*)malloc(strlen(port) + 1); // 分配足够的内存
     strcpy(p,port);
     listenAddr.sin_port = htons(std::atoi(p));  //port
+    free (p);
     int res=bind(listenSock,(struct sockaddr *)&listenAddr,sizeof(listenAddr));// 将socket()返回值和本地的IP端口绑定到一起
     listen(listenSock,10);
     std::cout<<"begin listening"<<std::endl;

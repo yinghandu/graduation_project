@@ -10,17 +10,24 @@ void PostOffice::init(const char *ip,const char *port) {
 
 void PostOffice::schedulerCreateObjects(std::unordered_map<int,std::pair<std::string,std::string>> &ips) {
     std::unordered_map<int,std::pair<std::string,std::string>>::iterator it;
+    
+    int _com_last;//记录coms的数量
+
     for(it=ips.begin();it!=ips.end();++it){
-        Com *com=new Com();
-        com->id=it->first;
+        
+        coms.push_back(std::make_unique<Com>());
+        _com_last=coms.size()-1;
+        coms[_com_last]->id=it->first;
         char *ip=new char[strlen(it->second.first.c_str())+1],*port=new char[strlen(it->second.second.c_str())+1];
         strcpy(ip,it->second.first.c_str());
         strcpy(port,it->second.second.c_str());
-        // com->setSendAddr(ip,port);
-        // while(!com->sendSocket());
-        // coms.push_back(com);
-        std::cout<<"开始连接"<<std::endl;
+        coms[_com_last]->setSendAddr(ip,port);
+        while(!com->sendSocket());
+        delete ip;
+        delete port;
+        
     }
+
 }
 
 bool PostOffice::schedulerCreatePassiveConnections() {
@@ -50,6 +57,7 @@ bool PostOffice::schedulerCreatePassiveConnections() {
         }
         if(alla==coms.size()) break;
     }
+    return true;
 }
 
 void PostOffice::server_workerConnectScheduler(const char * ip_,const char *port_) {

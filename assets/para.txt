@@ -1,4 +1,4 @@
 role scheduler
-ip 127.0.0.1
-port 1234
-config_path ../assets/config.txt
+ip 47.100.103.148
+port 10000
+config_path assets/config.txt

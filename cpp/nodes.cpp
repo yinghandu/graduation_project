@@ -13,6 +13,9 @@ void nodes::setData(Data *d) {
 
 void nodes::loadConfig(const std::string &configPath) {
     std::ifstream inFile(configPath, std::ios::in);
+    if (!inFile.is_open()) {
+        printf("Error:打开config文件失败!\n");
+    } 
     std::istringstream sin;
     std::string line,fp,sp,tp;
     std::pair<std::string ,std::string> ip;
