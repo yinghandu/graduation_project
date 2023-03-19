@@ -13,6 +13,7 @@ SOCKET Com::listenSock;
 Com::Com(const Com& other)
 {
     std::strcpy(ip, other.ip);
+    std::strcpy(port, other.port);
     id = other.id;
     allocated = other.allocated;
     std::memcpy(&sendAddr, &other.sendAddr, sizeof(sendAddr));
@@ -21,6 +22,7 @@ Com::Com(const Com& other)
 }
 
 void Com::init(const char *ip,const char *port) {
+    int res;
     memset(&listenAddr, 0, sizeof(listenAddr));  //set 0
     listenSock = socket(AF_INET, SOCK_STREAM, 0);
     listenAddr.sin_family = AF_INET;  // use IPv4
@@ -29,8 +31,10 @@ void Com::init(const char *ip,const char *port) {
     strcpy(p,port);
     listenAddr.sin_port = htons(std::atoi(p));  //port
     free (p);
-    int res=bind(listenSock,(struct sockaddr *)&listenAddr,sizeof(listenAddr));// 将socket()返回值和本地的IP端口绑定到一起
-    listen(listenSock,10);
+    res=bind(listenSock,(struct sockaddr *)&listenAddr,sizeof(listenAddr));// 将socket()返回值和本地的IP端口绑定到一起
+    if(res==-1) perror("BIND:");
+    res=listen(listenSock,10);
+    if(res==-1) perror("LISTEN:");
     std::cout<<"begin listening"<<std::endl;
 }
 
@@ -41,6 +45,7 @@ void Com::setSendAddr(char *Ip,char *Port) {
     sendAddr.sin_addr.s_addr = inet_addr(Ip);  //IP address
     sendAddr.sin_port = htons(std::stoi(Port));  //port
     strcpy(ip,Ip);
+    strcpy(port,Port);
     std::cout<<"ip seted"<<std::endl;
 }
 
@@ -49,8 +54,15 @@ bool Com::sendSocket() {
     sendSock=socket(AF_INET, SOCK_STREAM, 0);
     int len = sizeof(sockaddr_in);
     int i = connect(sendSock, (sockaddr*)&sendAddr, len);
-    std::cout<<"connect success"<<std::endl;
-    std::cout<<"ip is:"<<ip<<std::endl;
+    std::cout << "Sending data to " << inet_ntoa(sendAddr.sin_addr) << ":" << ntohs(sendAddr.sin_port) << std::endl;
+    if(i==-1){
+        flag=false;
+        perror("CONNECT");
+    }
+    else{
+        std::cout<<"connect success!"<<std::endl;
+    }
+    
     return flag;
 }
 

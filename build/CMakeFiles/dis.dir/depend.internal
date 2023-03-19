@@ -41,4 +41,5 @@ CMakeFiles/dis.dir/main.cpp.o
  /dis/dis/header/PostOffice.h
  /dis/dis/header/nodes.h
  /dis/dis/header/scheduler.h
+ /dis/dis/header/server.h
  /dis/dis/main.cpp

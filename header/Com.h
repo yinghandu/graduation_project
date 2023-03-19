@@ -32,7 +32,8 @@ typedef int SOCKET;
 
 class Com {
 private:
-    char ip[16];
+    char ip[32];
+    char port[6];
     int id;
     bool allocated=false;
     struct sockaddr_in sendAddr;
