@@ -14,7 +14,6 @@ void PostOffice::schedulerCreateObjects(std::unordered_map<int,std::pair<std::st
     int _com_last;//记录coms的数量
 
     for(it=ips.begin();it!=ips.end();++it){
-        
         coms.push_back(std::make_unique<Com>());
         _com_last=coms.size()-1;
         coms[_com_last]->id=it->first;
@@ -22,10 +21,9 @@ void PostOffice::schedulerCreateObjects(std::unordered_map<int,std::pair<std::st
         strcpy(ip,it->second.first.c_str());
         strcpy(port,it->second.second.c_str());
         coms[_com_last]->setSendAddr(ip,port);
-        while(!com->sendSocket());
+        while(!coms[_com_last]->sendSocket());
         delete ip;
         delete port;
-        
     }
 
 }
@@ -33,7 +31,7 @@ void PostOffice::schedulerCreateObjects(std::unordered_map<int,std::pair<std::st
 bool PostOffice::schedulerCreatePassiveConnections() {
     int alla=0,iResult;
     u_long iMode = 0;
-    std::cout<<"coms size is:"<<coms.size()<<std::endl;
+    printf("coms size is:%d\n",coms.size());
     while(true){
         struct sockaddr_in recv_addr;
         socklen_t len=sizeof(recv_addr);
@@ -44,6 +42,7 @@ bool PostOffice::schedulerCreatePassiveConnections() {
         //get receive ip
         char *tmpIp=inet_ntoa(recv_addr.sin_addr);//转网络字节序
         std::cout<<"ip is :"<<tmpIp<<std::endl;
+
         for(int i=0;i<coms.size();++i){
             if(!coms[i]->allocated){
                 if(!strcmp(tmpIp,coms[i]->ip)){
@@ -57,10 +56,12 @@ bool PostOffice::schedulerCreatePassiveConnections() {
         }
         if(alla==coms.size()) break;
     }
+    printf("scheduler initiated!\n");
     return true;
 }
 
 void PostOffice::server_workerConnectScheduler(const char * ip_,const char *port_) {
+    int _com_last;//记录coms的数量
     while(true){
         struct sockaddr_in recv_addr;
         socklen_t len=sizeof(recv_addr);
@@ -69,24 +70,36 @@ void PostOffice::server_workerConnectScheduler(const char * ip_,const char *port
         receive=accept4(Com::listenSock,(sockaddr*)&recv_addr, &len,SOCK_NONBLOCK);
         std::cout<<"accept success"<<std::endl;
         //get receive ip
+
         char *tmpIp=inet_ntoa(recv_addr.sin_addr);
-        char ip[16],port[5];
+        
+        char tmpPort[6];
+        uint16_t ports = ntohs(recv_addr.sin_port);
+        sprintf(tmpPort, "%hu", ports);
+
+        //const cahr * to char *
+        char ip[32],port[6];
+        memset(ip, 0, sizeof(ip));
+        memset(port, 0, sizeof(port));
         strcpy(ip,ip_);
         strcpy(port,port_);
+
         if(!strcmp(tmpIp,ip)){
-            Com *com=new Com();
-            strcpy(com->ip,ip);
-            com->id=0;
-            com->recvSock=receive;
-            com->setSendAddr(ip,port);
-            com->sendSocket();
-            coms.push_back(com);
-            //connect success
+            coms.push_back(std::make_unique<Com>());
+            _com_last=coms.size()-1;
+            strcpy(coms[_com_last]->ip,ip);
+            coms[_com_last]->id=0;
+            coms[_com_last]->recvSock=receive;
+            coms[_com_last]->setSendAddr(ip,port);
+            while(!coms[_com_last]->sendSocket());
+            std::cout<<"Connect success!"<<std::endl;
             break;
         }else{
+            std::cout<<"tmpIp is:"<<tmpIp<<std::endl;
             close(receive);
         }
     }
+
 }
 
 

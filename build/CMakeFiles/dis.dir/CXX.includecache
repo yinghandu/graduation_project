@@ -77,6 +77,8 @@ Data.h
 /dis/dis/header/Data.h
 scheduler.h
 /dis/dis/header/scheduler.h
+server.h
+/dis/dis/header/server.h
 
 /dis/dis/header/PostOffice.h
 Com.h
