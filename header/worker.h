@@ -5,10 +5,15 @@
 #ifndef DIS_WORKER_H
 #define DIS_WORKER_H
 #include <string>
+#include "nodes.h"
 
-class worker {
-    int worker_id;
-    std::pair<std::string,std::string> addr;
+class worker :public nodes {
+private:
+
+public:
+    worker(){};
+    void init();
+
 };
 
 

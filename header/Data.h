@@ -44,6 +44,7 @@ public:
     friend class nodes;
     friend class scheduler;
     friend class server;
+    friend class worker;
     
 };
 

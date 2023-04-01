@@ -10,6 +10,8 @@ int main(int argc,char **argv) {
         Scheduler(dtmp);//if role is scheduler ,carry out scheduler function
     else if(dtmp->getRole()=="server")
         Server(dtmp);//if role is server ,carry out server function
+    else if(dtmp->getRole()=="worker")
+        Worker(dtmp);//if role is worker ,carry out worker function
 
     return 0;
 }
