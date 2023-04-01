@@ -35,28 +35,8 @@
 /dis/dis/header/worker.h
 
 /dis/dis/header/Com.h
-iostream
--
-vector
--
-queue
--
-memory
--
-unordered_map
--
-sys/socket.h
--
-unistd.h
--
-netinet/in.h
--
-arpa/inet.h
--
-cstring
--
-random
--
+Tools.h
+/dis/dis/header/Tools.h
 
 /dis/dis/header/Data.h
 fstream
@@ -79,6 +59,8 @@ scheduler.h
 /dis/dis/header/scheduler.h
 server.h
 /dis/dis/header/server.h
+worker.h
+/dis/dis/header/worker.h
 
 /dis/dis/header/PostOffice.h
 Com.h
@@ -86,6 +68,42 @@ Com.h
 cstring
 -
 thread
+-
+
+/dis/dis/header/Tools.h
+iostream
+-
+vector
+-
+queue
+-
+memory
+-
+thread
+-
+queue
+-
+unordered_map
+-
+mutex
+-
+sys/socket.h
+-
+unistd.h
+-
+netinet/in.h
+-
+arpa/inet.h
+-
+cstring
+-
+random
+-
+poll.h
+-
+cstdlib
+-
+ctime
 -
 
 /dis/dis/header/nodes.h
@@ -121,6 +139,8 @@ nodes.h
 /dis/dis/header/worker.h
 string
 -
+nodes.h
+/dis/dis/header/nodes.h
 
 /dis/dis/main.cpp
 iostream

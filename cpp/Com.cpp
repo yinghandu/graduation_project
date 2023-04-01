@@ -4,8 +4,10 @@
 
 #include "../header/Com.h"
 
-std::queue<std::pair<int,std::string>> mq;
-
+std::queue<packs *> send_queue;
+std::queue<packs *> recv_queue;
+std::mutex send_mtx;
+std::mutex recv_mtx;
 
 struct sockaddr_in Com::listenAddr;
 SOCKET Com::listenSock;
@@ -40,7 +42,7 @@ void Com::init(const char *ip,const char *port) {
 
 void Com::setSendAddr(char *Ip,char *Port) {
     memset(&sendAddr, 0, sizeof(sendAddr));  //set 0
-    sendSock = socket(AF_INET, SOCK_STREAM, 0);
+    // sendSock = socket(AF_INET, SOCK_STREAM, 0);
     sendAddr.sin_family = AF_INET;  // use IPv4
     sendAddr.sin_addr.s_addr = inet_addr(Ip);  //IP address
     sendAddr.sin_port = htons(std::stoi(Port));  //port
@@ -66,58 +68,10 @@ bool Com::sendSocket() {
     return flag;
 }
 
-bool Com::recvSocket() {
-    // int len=sizeof(SOCKADDR);
-//    recvSock=accept(Com::listenSock,(SOCKADDR*)&recvAddr, &len);
-//    recvSock=WSAAccept(ListenSocket, (SOCKADDR*) &saClient, &iClientSize,
-//                       &ConditionAcceptFunc, NULL);
-    // return false;
-}
-
 void Com::setId(int Id) {
     id=Id;
 }
 
-bool Com::sendMessage(std::string &data) {
-    // int iResult;
-    // const char * d=data.c_str();
-    // int n = strlen(d);   //calculate the length of Transmit Data
-    // buff tmp;
-    // tmp.msgLen= htonl(n);
-    // tmp.data=d;
-    // iResult = send(sendSock, reinterpret_cast<const char *>(&tmp), n + 4, 0 );
-    // if (iResult == SOCKET_ERROR) {
-    //     wprintf(L"send failed with error: %d\n", WSAGetLastError());
-    //     exit(0);
-    // }
-    // data.clear();
-    // return false;
-}
-
-bool Com::recvm(std::string &data) {
-    // data.clear();
-    // int iResult;
-    // char msgLen[4];
-
-    // iResult = recv(recvSock, msgLen, 4, MSG_PEEK);
-    // if(iResult<0){
-    //     return false;
-    // }
-
-
-    // int readBytes = recv(recvSock,recvbuf,,0); //读取出后续的数据
-
-
-    // if ( iResult > 0 )
-    //     printf("Bytes received: %d\n", iResult);
-    // else if ( iResult == 0 )
-    //     printf("Connection closed\n");
-    // else
-    //     printf("recv failed: %d\n", WSAGetLastError());
-
-
-    // return false;
-}
 
 
 

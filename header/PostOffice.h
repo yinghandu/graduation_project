@@ -21,11 +21,16 @@ private:
 
 public:
     PostOffice(){};
+    void setId(int Id);
     void init(const char *ip, const char *port); // parameter: local ip and port
     void schedulerCreateObjects(std::unordered_map<int, std::pair<std::string, std::string>> &ips);
     bool schedulerCreatePassiveConnections();
     void server_workerConnectScheduler(const char *ip_, const char *port_);
+    void sendMessage();
     void receiveMessage();
+    void showComsMessage() const ;
+
+    friend class nodes;
 };
 
 #endif // DIS_POSTOFFICE_H
@@ -36,3 +41,4 @@ public:
 //     [2]:listen port
 //     [3]:send ip
 //     [4]:send port
+
