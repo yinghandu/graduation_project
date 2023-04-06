@@ -7,12 +7,13 @@
 #include "Com.h"
 #include "Data.h"
 #include "PostOffice.h"
+#include "LogisticRegression.h"
 
 
 class nodes {
 protected:
     std::unordered_map<int,std::pair<std::string,std::string>> __nodes;//node特有数据结构，保存与之联系的结点类型及ip
-    Data *data;
+    Data *datas;
     
 
 public:
@@ -24,6 +25,7 @@ public:
     virtual void init()=0;
     
     PostOffice *post_office;
+    Logistic * lr;
 };
 
 

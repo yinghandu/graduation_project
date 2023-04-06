@@ -13,6 +13,7 @@ private:
     char port[6];
     int id;
     bool allocated=false;
+    bool idSetted=false;
     struct sockaddr_in sendAddr;
     struct sockaddr_in recvAddr;
     static struct sockaddr_in listenAddr;

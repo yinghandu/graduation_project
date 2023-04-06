@@ -79,7 +79,11 @@ queue
 -
 memory
 -
+utility
+-
 thread
+-
+sstream
 -
 queue
 -
@@ -104,6 +108,8 @@ poll.h
 cstdlib
 -
 ctime
+-
+fcntl.h
 -
 
 /dis/dis/header/nodes.h
