@@ -20,9 +20,9 @@ void Scheduler(Data *d){
     s->setData(d);  //set loaded data
     delete d;
     s->init();  //init the scheduler according to the parameters given by data->config_path
-    //s->send_test();
-    //s->recv_test();
-    s->post_office->showComsMessage();
+    // s->send_test();
+    // s->recv_test();
+    // s->post_office->showComsMessage();
     getchar();
 }
 
@@ -36,8 +36,9 @@ void Server(Data *d){
     s->setData(d);  //set loaded data
     delete d;
     s->init();  //init the server according to the parameters given by data->config_path
-    //s->send_test();
-    //s->recv_test();
+
+    s->waitBegin();
+
     getchar();
 }
 
@@ -51,8 +52,25 @@ void Worker(Data *d){
     s->setData(d);  //set loaded data
     delete d;
     s->init();  //init the server according to the parameters given by data->config_path
-    //s->send_test();
-    //s->recv_test();
+    
+    s->waitBegin();
+
+    int epoch=10;
+
+    while(epoch--){
+        //pull weights
+        std::vector<float> weights;
+        std::vector<float> res;
+        //
+        std::vector<std::vector<float>> r_samples;
+        s->random_sample(s->datas->data,r_samples,20);//get samples
+        res=s->lr->train(weights,r_samples);
+        
+        //push res
+        //
+
+    }
+
     getchar();
 }
 

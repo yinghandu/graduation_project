@@ -12,7 +12,9 @@
 #include <vector>
 #include <queue>
 #include <memory>
+#include <utility>
 #include <thread>
+#include <sstream>
 #include <queue>
 #include <unordered_map>
 #include <mutex>
@@ -22,17 +24,23 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <random>
+#include <cstring>
+#include <thread>
 #include <poll.h>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
+#include <fcntl.h>
 
 typedef int SOCKET;//typedef
 
 enum class Option {
-    CONFIRM,
-    KEEPALLIVE,
-    CONNECT_WORKER,
-    WEIGHTS
+    SET_ID,
+    CONFIRM_ID,
+    SERVER_WORKER_CONNECTED,
+    CONFIRM_CONNECTED,
+    PUSH,
+    PULL
 };
 
 #pragma pack(push, 1)
@@ -62,17 +70,6 @@ extern std::mutex recv_mtx;
 inline void serialize(packs& p, char* buffer, size_t buffer_size);
 
 inline void deserialize(char* buffer, size_t buffer_size, packs& p);
-
-
-
-
-
-
-
-
-
-
-
 
 inline void serialize(packs& p, char* buffer, size_t buffer_size) {
     size_t offset = 0;
@@ -137,5 +134,16 @@ inline void deserialize(const char* buffer, size_t buffer_size, packs& p) {
     }
 }
 
+inline float sigmoid(float x)
+{
+    return  1 / (1 + exp(-x));
+}
+
+inline float loss_compute(float x, float y)
+{
+    float loss;
+    loss = y * log(x) + (1 - y)*log(1 - x);
+    return loss;
+}
 
 #endif //TOOLS_H

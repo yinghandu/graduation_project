@@ -10,6 +10,10 @@ void PostOffice::setId(int Id) {
     id=Id;
 }
 
+void PostOffice::showId() const{
+    std::cout<<"id 是:"<<id<<std::endl;
+}
+
 void PostOffice::init(const char *ip,const char *port) {
     Com::init(ip,port);
 }
@@ -21,11 +25,12 @@ void PostOffice::schedulerCreateObjects(std::unordered_map<int,std::pair<std::st
         coms.push_back(std::make_unique<Com>());
         _com_last=coms.size()-1;
         coms[_com_last]->id=it->first;
+        if(it->first%2==1) servers.push_back(it->first);//记录workers id
+        else workers.push_back(it->first);
         char *ip=new char[strlen(it->second.first.c_str())+1],*port=new char[strlen(it->second.second.c_str())+1];
         strcpy(ip,it->second.first.c_str());
         strcpy(port,it->second.second.c_str());
         coms[_com_last]->setSendAddr(ip,port);
-        coms[_com_last]->id=it->first;
         while(!coms[_com_last]->sendSocket());
         delete ip;
         delete port;
@@ -40,9 +45,9 @@ bool PostOffice::schedulerCreatePassiveConnections() {
         struct sockaddr_in recv_addr;
         socklen_t len=sizeof(recv_addr);
         SOCKET receive;
-        std::cout<<"begin accept"<<std::endl;
+        // std::cout<<"begin accept"<<std::endl;
         receive=accept4(Com::listenSock,(sockaddr*)&recv_addr, &len,SOCK_NONBLOCK);//设置为非阻塞
-        std::cout<<"accept success! receive的sock是: "<<receive<<std::endl;
+        // std::cout<<"accept success! receive的sock是: "<<receive<<std::endl;
         //get receive ip
 
         char *tmpIp=inet_ntoa(recv_addr.sin_addr);
@@ -57,6 +62,7 @@ bool PostOffice::schedulerCreatePassiveConnections() {
                     coms[i]->recvAddr=recv_addr;
                     coms[i]->allocated=true;
                     alla++;
+                    break;
                 }
             }
         }
@@ -71,12 +77,14 @@ void PostOffice::server_workerConnectScheduler(const char * ip_,const char *port
     while(true){
         struct sockaddr_in recv_addr;
         socklen_t len=sizeof(recv_addr);
-        SOCKET receive;
-        std::cout<<"begin accept"<<std::endl;
+        SOCKET receive=-1;
+        std::cout<<Com::listenSock<<std::endl;
+        std::cout<<receive<<std::endl;
         receive=accept4(Com::listenSock,(sockaddr*)&recv_addr, &len,SOCK_NONBLOCK);
-        std::cout<<"accept success!"<<std::endl;
-        //get receive ip
-
+        if (receive == -1 && errno == EAGAIN) {
+                // 没有数据可用，等待下一次循环
+                continue;
+        }
         char *tmpIp=inet_ntoa(recv_addr.sin_addr);
         
         char tmpPort[6];
@@ -97,13 +105,64 @@ void PostOffice::server_workerConnectScheduler(const char * ip_,const char *port
             coms[_com_last]->id=0;
             coms[_com_last]->recvSock=receive;
             coms[_com_last]->setSendAddr(ip,port);
+            // std::cout<<"kai shi send"<<std::endl;
             while(!coms[_com_last]->sendSocket());
             std::cout<<"Connect success!"<<std::endl;
             break;
         }else{
-            std::cout<<"tmpIp is:"<<tmpIp<<std::endl;
+            // std::cout<<"tmpIp is:"<<tmpIp<<std::endl;
             close(receive);
         }
+    }
+}
+
+void PostOffice::server_workerConnect(std::string msg){
+    std::string ip,port,server_id,worker_id;
+    std::istringstream ss;
+    ss.str(msg);
+    ss >> ip;
+    ss >> port;
+    ss >> server_id;
+    ss >> worker_id;
+
+    char* tmpIp = new char[ip.length() + 1];
+    char* tmpPort = new char[port.length() + 1];
+    // strcpy(tmpIp, ip.c_str());
+
+    strcpy(tmpIp, "172.21.194.66");
+    strcpy(tmpPort, port.c_str());
+    if(id%2==0){//worker
+        server_workerConnectScheduler(tmpIp,tmpPort);
+    }else{//server
+        int _com_last;//记录coms的数量
+        coms.push_back(std::make_unique<Com>());
+        _com_last=coms.size()-1;
+        coms[_com_last]->id=std::stoi(worker_id);
+        workers.emplace_back(std::stoi(worker_id));
+        coms[_com_last]->setSendAddr(tmpIp,tmpPort);
+        sleep(2);
+        while(!coms[_com_last]->sendSocket());
+        while(true){
+            struct sockaddr_in recv_addr;
+            socklen_t len=sizeof(recv_addr);
+            SOCKET receive;
+            receive=accept4(Com::listenSock,(sockaddr*)&recv_addr, &len, SOCK_NONBLOCK);//设置为非阻塞
+            if (receive == -1 && errno == EAGAIN) {
+                // 没有数据可用，等待下一次循环
+                continue;
+            }
+            char *tmpip=inet_ntoa(recv_addr.sin_addr);
+            if(!strcmp(tmpIp,tmpip)){
+                coms[_com_last]->recvSock=receive;
+                coms[_com_last]->recvAddr=recv_addr;
+                coms[_com_last]->allocated=true;
+                break;
+            }
+        }
+        serverInformConnect(server_id,worker_id);
+
+        std::cout<<"server_id "<<server_id<<"  worker_id "<<worker_id<<std::endl;
+        
     }
 }
 
@@ -142,6 +201,10 @@ void PostOffice::sendMessage() {
                     break;
                 }
             }
+            delete[] p->weights.data();
+            p->weights.clear();
+            delete p;
+            p = nullptr;
         } else {
             send_mtx.unlock(); 
         }
@@ -160,7 +223,7 @@ void PostOffice::receiveMessage(){
             pollFdVec[i].revents = 0;
     }
 
-    std::cout<<"coms.size(): "<<coms.size()<<std::endl;
+    //std::cout<<"coms.size(): "<<coms.size()<<std::endl;
 
     int timeout=500;//ms
 
@@ -175,11 +238,11 @@ void PostOffice::receiveMessage(){
         } else {
             for (size_t i = 0; i < pollFdVec.size(); i++) {
                 if (pollFdVec[i].revents & POLLIN) {//找到是哪个发送了
-                    std::cout<<" 第 "<< i <<"个接收到了信号！"<<std::endl;
+                    //std::cout<<" 第 "<< i <<"个接收到了信号！"<<std::endl;
                     buffer.clear();
                     char recvbuf[2048];
                     int recvlen = recv(coms[i]->recvSock, recvbuf, sizeof(recvbuf), 0);
-                    std::cout<<" 他的recvsock是 "<< coms[i]->recvSock <<"它的recvlen是"<<recvlen<<std::endl;
+                    //std::cout<<" 他的recvsock是 "<< coms[i]->recvSock <<"它的recvlen是"<<recvlen<<std::endl;
                     if (recvlen < 0) {
                         perror("RECEIVE");
                         continue;
@@ -195,14 +258,34 @@ void PostOffice::receiveMessage(){
                         deserialize(temp, buffer_size, *p);
                         //std::cout << "Receive a packet: " << _packet.size() << " bytes" << std::endl;
                         p->send_id=coms[i]->id;
-                        //std::cout<<p->msg<<std::endl;
-                        //std::cout<<p->recv_id<<std::endl;
-                        recv_mtx.lock(); // lock
-                        recv_queue.push(p);
-                        recv_mtx.unlock(); // unlock
+                        switch (p->meta)
+                        {
+                        case Option::SET_ID:
+                            setId(std::stoi(p->msg));
+                            server_workerWaitID();
+                            break;
+                        case Option::CONFIRM_ID:
+                            coms[i]->idSetted=true;
+                            break;
+                        case Option::SERVER_WORKER_CONNECTED:
+                            server_workerConnect(p->msg); 
+                            break;
+                        case Option::CONFIRM_CONNECTED:
+                            if(sw_connected.find(p->msg) != sw_connected.end()){
+                                sw_connected.find(p->msg)->second=1;
+                                std::cout<<"RIGHT"<<std::endl;
+                            }
+                            else{
+                                std::cout<<"WRONG"<<std::endl;
+                            }
+                            break;
+                        default:
+                            recv_mtx.lock(); // lock
+                            recv_queue.push(p);
+                            recv_mtx.unlock(); // unlock
+                            break;
+                        }
                     }
-                }else{
-                    std::cout<<" 第 "<< i <<"没有！！"<<std::endl;
                 }
             }
         }
@@ -218,3 +301,99 @@ void PostOffice::showComsMessage() const {
     }
 }
 
+void PostOffice::schedulerSetID() {
+    for (auto iter = coms.begin(); iter != coms.end(); ++iter) {
+        Com* com = iter->get();
+        packs *p=new packs();
+        p->meta=Option::SET_ID;
+        p->msg+=std::to_string(com->id);
+        p->recv_id=com->id;
+        p->send_id=id;
+        send_mtx.lock(); // lock
+        send_queue.push(p);
+        send_mtx.unlock(); // unlock
+    }
+}
+
+void PostOffice::schedulerSendServerWorker(){
+    for (auto iter = coms.begin(); iter != coms.end(); ++iter) {//for each server
+        Com* com_s = iter->get();
+        std::string comsip(com_s->ip);
+        std::string comsport(com_s->port);
+        if(com_s->id%2!=0){//server
+            for (auto iter = coms.begin(); iter != coms.end(); ++iter) {
+                Com* com = iter->get();
+                if(com->id%2==0){//worker
+                    std::string comip(com->ip);
+                    std::string comport(com->port);
+                    //to server
+                    packs *p_s=new packs();
+                    p_s->meta=Option::SERVER_WORKER_CONNECTED;
+                    p_s->msg+=comip+" "+comport+" "+std::to_string(com_s->id)+" "+std::to_string(com->id);
+                    p_s->recv_id=com_s->id;
+                    p_s->send_id=id;
+                    //to worker
+                    packs *p=new packs();
+                    p->meta=Option::SERVER_WORKER_CONNECTED;
+                    p->msg+=comsip+" "+comsport+" "+std::to_string(com_s->id)+" "+std::to_string(com->id);
+                    p->recv_id=com->id;
+                    p->send_id=id;
+                    send_mtx.lock(); // lock
+                    send_queue.push(p);
+                    send_queue.push(p_s);
+                    send_mtx.unlock(); // unlock
+                }
+            }
+        }
+    }
+}
+
+void PostOffice::schedulerConfirmID(){
+    bool flag=true;
+    sleep(1);
+    while(flag){
+        flag=false;
+        for (auto iter = coms.begin(); iter != coms.end(); ++iter) {
+            Com* com = iter->get();
+            if(!com->idSetted){
+                flag=true;
+            }
+        }
+    }
+}
+
+void PostOffice::server_workerWaitID(){
+    packs *p=new packs();
+    p->meta=Option::CONFIRM_ID;
+    p->recv_id=0;
+    p->send_id=id;
+    send_mtx.lock(); // lock
+    send_queue.push(p);
+    send_mtx.unlock(); // unlock
+}
+
+void PostOffice::schedulerConfirmConnection(){
+    bool flag=true;
+    sleep(2);
+    std::cout<<"sw_connected.size()"<<sw_connected.size()<<std::endl;
+    while(flag){
+        flag=false;
+        for (auto it = sw_connected.begin(); it != sw_connected.end(); ++it) {
+            auto value = it->second;
+            if(value==0){
+                flag=true;
+            }
+        }
+    }
+}
+
+void PostOffice::serverInformConnect(std::string s_id,std::string w_id){
+    packs *p=new packs();
+    p->meta=Option::CONFIRM_CONNECTED;
+    p->recv_id=0;
+    p->send_id=id;
+    p->msg+=s_id+" "+w_id;
+    send_mtx.lock(); // lock
+    send_queue.push(p);
+    send_mtx.unlock(); // unlock
+}

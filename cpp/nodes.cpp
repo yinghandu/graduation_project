@@ -5,10 +5,10 @@
 #include "../header/nodes.h"
 
 void nodes::setData(Data *d) {
-    if (data != nullptr) {
-        delete data; // 如果 data 已经指向某个内存块，先释放它
+    if (datas != nullptr) {
+        delete datas; // 如果 data 已经指向某个内存块，先释放它
     }
-    data = new Data(*d); // 分配一个新的内存块，并将 d 所指向的对象拷贝到其中
+    datas = new Data(*d); // 分配一个新的内存块，并将 d 所指向的对象拷贝到其中
 }
 
 void nodes::loadConfig(const std::string &configPath) {

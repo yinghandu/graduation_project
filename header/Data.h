@@ -41,6 +41,7 @@ public:
     void setParaPath(char *_para_path);  //set original paraPath **
     std::string getRole();  //get role
     ~Data();
+
     friend class nodes;
     friend class scheduler;
     friend class server;
