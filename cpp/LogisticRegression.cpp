@@ -4,13 +4,17 @@
 
 #include "../header/LogisticRegression.h"
 
-std::vector<float> Logistic::train(std::vector<float> &weights, std::vector<std::vector<float>> &data) {
+std::vector<float> Logistic::train(std::vector<float> &weights, std::vector<std::vector<float>> &data){
+
     int col=data[0].size(),row=data.size();//row,col
 
     int i,j,bias=weights[col-1];
 
     std::vector<float> res(col);
+
     float b=0,z;
+
+    // std::cout<<"col "<<col<<"row "<<row<<std::endl;
 
     for(i=0;i<row;++i){
         z=0;
@@ -31,7 +35,7 @@ std::vector<float> Logistic::train(std::vector<float> &weights, std::vector<std:
 
     b/=row;
 
-    weights[col-1]=b;
+    res[col-1]=b;
 
-    return weights; // 返回weights的引用
+    return res; // 返回weights的引用
 }

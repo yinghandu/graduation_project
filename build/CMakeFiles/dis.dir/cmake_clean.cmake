@@ -7,6 +7,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/dis.dir/cpp/Data.cpp.o"
   "CMakeFiles/dis.dir/cpp/nodes.cpp.o"
   "CMakeFiles/dis.dir/cpp/PostOffice.cpp.o"
+  "CMakeFiles/dis.dir/cpp/LogisticRegression.cpp.o"
   "dis.pdb"
   "dis"
 )

@@ -2,3 +2,5 @@ role scheduler
 ip 172.24.26.221
 port 18888
 config_path assets/config.txt
+data_path assets/framingham.csv
+alpha 0.8

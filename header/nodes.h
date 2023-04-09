@@ -7,17 +7,17 @@
 #include "Com.h"
 #include "Data.h"
 #include "PostOffice.h"
-#include "LogisticRegression.h"
+
 
 
 class nodes {
 protected:
     std::unordered_map<int,std::pair<std::string,std::string>> __nodes;//node特有数据结构，保存与之联系的结点类型及ip
-    Data *datas;
+    
     
 
 public:
-    nodes() : post_office(new PostOffice()) , data(nullptr) {}
+    nodes() : post_office(new PostOffice()) , datas(nullptr) {}
     void setData(Data *d);
     void loadConfig(const std::string &configPath);
     void send_test();
@@ -25,7 +25,7 @@ public:
     virtual void init()=0;
     
     PostOffice *post_office;
-    Logistic * lr;
+    Data *datas;
 };
 
 

@@ -17,7 +17,7 @@ class scheduler;
 class frind;
 
 class Data {
-private:
+public:
     char *para_path=new char(100);
     std::string config_path;
     std::string data_path;
@@ -33,7 +33,7 @@ private:
     int epoch;
     float alpha;
 
-public:
+
     Data(){};
     void init();  //1.load parameters(para.txt) 2.set parameters 3.load training/test data
     void loadParameters();  //load parameters from parameter file

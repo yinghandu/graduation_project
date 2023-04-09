@@ -13,12 +13,11 @@ const int maxCom = 10;
 class PostOffice
 {
 private:
-    int id;
     bool initiated = false;
     bool idSetted = false;
+
     std::vector<std::unique_ptr<Com>> coms;
-    std::vector<int> workers;
-    std::vector<int> servers;
+
     std::unordered_map<std::string,int> sw_connected;//only for scheduler,initialized in scheduler
 
 public:
@@ -39,7 +38,12 @@ public:
     void serverInformConnect(std::string s_id,std::string w_id);//server inform the scheduler it had been connected with worker
     void schedulerSendServerWorker();//inform the servers of the ip and port they have to connect,or inform the workers
     void schedulerConfirmConnection();//inform the servers of the ip and port they have to connect,or inform the workers
-    
+
+    std::vector<int> workers;
+    std::vector<int> servers;
+    int id;
+    bool begin;
+
     friend class nodes;
     friend class scheduler;
 };

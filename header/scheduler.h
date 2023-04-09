@@ -20,7 +20,7 @@ private:
 public:
     scheduler(){};
     void init();
-
+    void beginWorking();
 };
 
 

@@ -14,6 +14,10 @@
 ../header/Data.h
 /dis/dis/header/Data.h
 
+/dis/dis/cpp/LogisticRegression.cpp
+../header/LogisticRegression.h
+/dis/dis/header/LogisticRegression.h
+
 /dis/dis/cpp/PostOffice.cpp
 ../header/PostOffice.h
 /dis/dis/header/PostOffice.h
@@ -62,6 +66,10 @@ server.h
 worker.h
 /dis/dis/header/worker.h
 
+/dis/dis/header/LogisticRegression.h
+Tools.h
+/dis/dis/header/Tools.h
+
 /dis/dis/header/PostOffice.h
 Com.h
 /dis/dis/header/Com.h
@@ -80,6 +88,8 @@ queue
 memory
 -
 utility
+-
+cstdio
 -
 thread
 -
@@ -103,11 +113,19 @@ cstring
 -
 random
 -
+cstring
+-
+thread
+-
 poll.h
 -
 cstdlib
 -
 ctime
+-
+iomanip
+-
+cmath
 -
 fcntl.h
 -
@@ -147,6 +165,8 @@ string
 -
 nodes.h
 /dis/dis/header/nodes.h
+LogisticRegression.h
+/dis/dis/header/LogisticRegression.h
 
 /dis/dis/main.cpp
 iostream
