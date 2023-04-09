@@ -9,19 +9,17 @@
 
 class server :public nodes{
 private:
-    bool begin;
-    float alpha;
     std::vector<float> w;
 
 
 public:
     server(){};
     void init();
+    void setAlpha(float a);
     void waitBegin() const;
-    void maintainWeights(std::vector<float> & weights);
+    void maintainWeights();
     void dealWithPush(std::vector<float> & weights);
     void dealWithPull(int sendId);
-
 };
 
 

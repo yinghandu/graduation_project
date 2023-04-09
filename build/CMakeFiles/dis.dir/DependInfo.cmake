@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/dis/dis/cpp/Com.cpp" "/dis/dis/build/CMakeFiles/dis.dir/cpp/Com.cpp.o"
   "/dis/dis/cpp/Data.cpp" "/dis/dis/build/CMakeFiles/dis.dir/cpp/Data.cpp.o"
+  "/dis/dis/cpp/LogisticRegression.cpp" "/dis/dis/build/CMakeFiles/dis.dir/cpp/LogisticRegression.cpp.o"
   "/dis/dis/cpp/PostOffice.cpp" "/dis/dis/build/CMakeFiles/dis.dir/cpp/PostOffice.cpp.o"
   "/dis/dis/cpp/nodes.cpp" "/dis/dis/build/CMakeFiles/dis.dir/cpp/nodes.cpp.o"
   "/dis/dis/cpp/scheduler.cpp" "/dis/dis/build/CMakeFiles/dis.dir/cpp/scheduler.cpp.o"

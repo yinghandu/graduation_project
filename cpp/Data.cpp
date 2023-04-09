@@ -58,6 +58,8 @@ void Data::loadData() {
         data.push_back(rowData);
         rowData.clear();
     }
+
+    std::cout<<"加载数据成功! 有 "<<data.size()<<" 行和 "<<data[0].size()<<" 列!"<<std::endl;
 }
 
 void Data::setParaPath(char *_para_path) {
@@ -77,11 +79,11 @@ void Data::init() {
     role=para.find("role")->second;
     ip=para.find("ip")->second;
     port=para.find("port")->second;
-    if(role=="scheduler"){
-        printf("scheduler结点\n");
+    if(role=="scheduler"||role=="server"){
+        data_path.clear();
+        data_path+=" ";
         return ;
     } 
-    std::cout<<"not scheduler"<<std::endl;
     loadData();
 }
 

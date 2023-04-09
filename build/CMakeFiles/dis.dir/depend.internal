@@ -8,6 +8,10 @@ CMakeFiles/dis.dir/cpp/Com.cpp.o
 CMakeFiles/dis.dir/cpp/Data.cpp.o
  /dis/dis/cpp/Data.cpp
  /dis/dis/header/Data.h
+CMakeFiles/dis.dir/cpp/LogisticRegression.cpp.o
+ /dis/dis/cpp/LogisticRegression.cpp
+ /dis/dis/header/LogisticRegression.h
+ /dis/dis/header/Tools.h
 CMakeFiles/dis.dir/cpp/PostOffice.cpp.o
  /dis/dis/cpp/PostOffice.cpp
  /dis/dis/header/Com.h
@@ -40,6 +44,7 @@ CMakeFiles/dis.dir/cpp/worker.cpp.o
  /dis/dis/cpp/worker.cpp
  /dis/dis/header/Com.h
  /dis/dis/header/Data.h
+ /dis/dis/header/LogisticRegression.h
  /dis/dis/header/PostOffice.h
  /dis/dis/header/Tools.h
  /dis/dis/header/nodes.h
@@ -48,6 +53,7 @@ CMakeFiles/dis.dir/main.cpp.o
  /dis/dis/header/Com.h
  /dis/dis/header/Data.h
  /dis/dis/header/Dis.h
+ /dis/dis/header/LogisticRegression.h
  /dis/dis/header/PostOffice.h
  /dis/dis/header/Tools.h
  /dis/dis/header/nodes.h

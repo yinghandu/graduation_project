@@ -57,20 +57,14 @@ bool Com::sendSocket() {
     bool flag=true;
     sendSock=socket(AF_INET, SOCK_STREAM, 0);
     int len = sizeof(sockaddr_in);
-    std::cout << "进入sendsocket"  << std::endl;
-
     int i = connect(sendSock, (sockaddr*)&sendAddr, len);
-    perror("CONNECT");
     int flags = fcntl(sendSock, F_GETFL, 0);
     flags |= O_NONBLOCK;
     fcntl(sendSock, F_SETFL, flags);
-    std::cout << "Sending data to " << inet_ntoa(sendAddr.sin_addr) << ":" << ntohs(sendAddr.sin_port) << std::endl;
+    // std::cout << "Sending data to " << inet_ntoa(sendAddr.sin_addr) << ":" << ntohs(sendAddr.sin_port) << std::endl;
     if(i==-1){
         flag=false;
         perror("CONNECT");
-    }
-    else{
-        std::cout<<"connect success!"<<std::endl;
     }
     
     return flag;

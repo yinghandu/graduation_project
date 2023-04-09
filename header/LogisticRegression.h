@@ -13,9 +13,8 @@ class Logistic
 {
 public:
     std::vector<float> train(std::vector<float> &weights,std::vector<std::vector<float>> &data);
-
     
 };
 
-#endif
+#endif //DIS_LOGISTICREGRESSION_H
 

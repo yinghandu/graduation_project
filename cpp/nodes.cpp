@@ -35,7 +35,7 @@ void nodes::loadConfig(const std::string &configPath) {
         if(fp=="server") node_id=node_id*2+1;
         if(fp=="scheduler") node_id=0;
         __nodes.emplace(node_id,ip);
-        std::cout <<"node_id: "<<node_id<< ", IP地址：" << ip.first << "，端口号：" << ip.second << std::endl;
+        // std::cout <<"node_id: "<<node_id<< ", IP地址：" << ip.first << "，端口号：" << ip.second << std::endl;
     }
 }
 
@@ -51,8 +51,8 @@ void nodes::send_test() {
             send_mtx.unlock(); // unlock
         }
     }
-    std::cout<<"send_test"<<std::endl;
-    std::cout<<"队列长度:"<<send_queue.size()<<std::endl;
+    // std::cout<<"send_test"<<std::endl;
+    // std::cout<<"队列长度:"<<send_queue.size()<<std::endl;
 }
 
 void nodes::recv_test() {
@@ -62,10 +62,9 @@ void nodes::recv_test() {
             packs * p = recv_queue.front(); //get a packet from queue
             recv_queue.pop();
             
-            std::cout<<"接收的信息包括："<<p->msg<<std::endl;
-
-            std::cout<<"接收的id="<<p->send_id<<std::endl;
-            std::cout<<"目前所剩队列长度："<<recv_queue.size()<<std::endl;
+            // std::cout<<"接收的信息包括："<<p->msg<<std::endl;
+            // std::cout<<"接收的id="<<p->send_id<<std::endl;
+            // std::cout<<"目前所剩队列长度："<<recv_queue.size()<<std::endl;
             recv_mtx.unlock(); // unlock
         } else {
             recv_mtx.unlock(); // unlock

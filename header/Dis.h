@@ -23,6 +23,7 @@ void Scheduler(Data *d){
     // s->send_test();
     // s->recv_test();
     // s->post_office->showComsMessage();
+    s->beginWorking();
     getchar();
 }
 
@@ -39,6 +40,12 @@ void Server(Data *d){
 
     s->waitBegin();
 
+    s->post_office->showComsMessage();
+
+    std::cout<<"开始训练"<<std::endl;
+
+    s->maintainWeights();
+
     getchar();
 }
 
@@ -51,26 +58,47 @@ void Worker(Data *d){
     }
     s->setData(d);  //set loaded data
     delete d;
+
     s->init();  //init the server according to the parameters given by data->config_path
     
     s->waitBegin();
 
-    int epoch=10;
+    s->post_office->showComsMessage();
 
+    std::cout<<"开始训练"<<std::endl;
+
+    int epoch=10;
+    sleep(3);
     while(epoch--){
+        sleep(1);
+        std::cout<<"第 " <<30-epoch <<" 次迭代"<<std::endl;
         //pull weights
-        std::vector<float> weights;
-        std::vector<float> res;
-        //
+        std::cout<<"拉取参数"<<std::endl;
+        s->pull(s->post_office->servers[0]);
+        for(int i=0;i<s->w.size();i++){
+            std::cout<<s->w[i]<<" ";
+        }
+        std::cout<<std::endl;
+        //caculate
+        std::cout<<"正在训练......"<<std::endl;
         std::vector<std::vector<float>> r_samples;
+        std::vector<float> res;
         s->random_sample(s->datas->data,r_samples,20);//get samples
-        res=s->lr->train(weights,r_samples);
-        
+
+        res=s->lr->train(s->w,r_samples);
+        s->w=res;
+        std::cout<<"训练后的参数是："<<std::endl;
+        for(int i=0;i<s->w.size();i++){
+            std::cout<<s->w[i]<<" ";
+        }
+        std::cout<<std::endl;
+
         //push res
-        //
+        std::cout<<"推送参数"<<std::endl;
+        s->push(s->post_office->servers[0]);
 
     }
-
+    getchar();
     getchar();
 }
 

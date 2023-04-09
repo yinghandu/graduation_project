@@ -177,6 +177,33 @@ cpp/Data.cpp.s:
 	$(MAKE) -f CMakeFiles/dis.dir/build.make CMakeFiles/dis.dir/cpp/Data.cpp.s
 .PHONY : cpp/Data.cpp.s
 
+cpp/LogisticRegression.o: cpp/LogisticRegression.cpp.o
+
+.PHONY : cpp/LogisticRegression.o
+
+# target to build an object file
+cpp/LogisticRegression.cpp.o:
+	$(MAKE) -f CMakeFiles/dis.dir/build.make CMakeFiles/dis.dir/cpp/LogisticRegression.cpp.o
+.PHONY : cpp/LogisticRegression.cpp.o
+
+cpp/LogisticRegression.i: cpp/LogisticRegression.cpp.i
+
+.PHONY : cpp/LogisticRegression.i
+
+# target to preprocess a source file
+cpp/LogisticRegression.cpp.i:
+	$(MAKE) -f CMakeFiles/dis.dir/build.make CMakeFiles/dis.dir/cpp/LogisticRegression.cpp.i
+.PHONY : cpp/LogisticRegression.cpp.i
+
+cpp/LogisticRegression.s: cpp/LogisticRegression.cpp.s
+
+.PHONY : cpp/LogisticRegression.s
+
+# target to generate assembly for a file
+cpp/LogisticRegression.cpp.s:
+	$(MAKE) -f CMakeFiles/dis.dir/build.make CMakeFiles/dis.dir/cpp/LogisticRegression.cpp.s
+.PHONY : cpp/LogisticRegression.cpp.s
+
 cpp/PostOffice.o: cpp/PostOffice.cpp.o
 
 .PHONY : cpp/PostOffice.o
@@ -354,6 +381,9 @@ help:
 	@echo "... cpp/Data.o"
 	@echo "... cpp/Data.i"
 	@echo "... cpp/Data.s"
+	@echo "... cpp/LogisticRegression.o"
+	@echo "... cpp/LogisticRegression.i"
+	@echo "... cpp/LogisticRegression.s"
 	@echo "... cpp/PostOffice.o"
 	@echo "... cpp/PostOffice.i"
 	@echo "... cpp/PostOffice.s"
