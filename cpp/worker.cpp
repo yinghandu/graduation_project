@@ -33,6 +33,7 @@ void worker::random_sample(const std::vector<std::vector<float>>& data,std::vect
 }
 
 void worker::pull(int ID){
+    int i=3;
     packs *p=new packs();
     p->meta=Option::PULL;
     p->recv_id=ID;
@@ -40,7 +41,6 @@ void worker::pull(int ID){
     send_mtx.lock(); // lock
     send_queue.push(p);
     send_mtx.unlock(); // unlock
-
     while(true){
         recv_mtx.lock(); // lock
         if (!recv_queue.empty()) { 
@@ -55,6 +55,17 @@ void worker::pull(int ID){
             break;
         } else {
             recv_mtx.unlock(); 
+            i--;
+            if(i<0){
+                packs *p=new packs();
+                p->meta=Option::PULL;
+                p->recv_id=ID;
+                p->send_id=post_office->id;
+                send_mtx.lock(); // lock
+                send_queue.push(p);
+                send_mtx.unlock(); // unlock
+                i=3;
+            }
         }
     } 
 }

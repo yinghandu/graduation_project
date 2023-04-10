@@ -67,36 +67,36 @@ void Worker(Data *d){
 
     std::cout<<"开始训练"<<std::endl;
 
-    int epoch=10;
+    int epoch=10000;
     sleep(3);
     while(epoch--){
-        sleep(1);
-        std::cout<<"第 " <<30-epoch <<" 次迭代"<<std::endl;
-        //pull weights
-        std::cout<<"拉取参数"<<std::endl;
+        // sleep(1);
+        printf("%d ",10000-epoch);
+        // std::cout<<"第 " <<10000-epoch <<" 次迭代"<<std::endl;
+        // pull weights
+        // std::cout<<"拉取参数"<<std::endl;
         s->pull(s->post_office->servers[0]);
-        for(int i=0;i<s->w.size();i++){
-            std::cout<<s->w[i]<<" ";
-        }
-        std::cout<<std::endl;
-        //caculate
-        std::cout<<"正在训练......"<<std::endl;
+        // for(int i=0;i<s->w.size();i++){
+        //     std::cout<<s->w[i]<<" ";
+        // }
+        // std::cout<<std::endl;
+        // caculate
+        // std::cout<<"正在训练......"<<std::endl;
         std::vector<std::vector<float>> r_samples;
         std::vector<float> res;
-        s->random_sample(s->datas->data,r_samples,20);//get samples
+        s->random_sample(s->datas->data,r_samples,8000);//get samples
 
         res=s->lr->train(s->w,r_samples);
         s->w=res;
-        std::cout<<"训练后的参数是："<<std::endl;
-        for(int i=0;i<s->w.size();i++){
-            std::cout<<s->w[i]<<" ";
-        }
-        std::cout<<std::endl;
+        // std::cout<<"训练后的参数是："<<std::endl;
+        // for(int i=0;i<s->w.size();i++){
+        //     std::cout<<s->w[i]<<" ";
+        // }
+        // std::cout<<std::endl;
 
-        //push res
-        std::cout<<"推送参数"<<std::endl;
+        // push res
+        // std::cout<<"推送参数"<<std::endl;
         s->push(s->post_office->servers[0]);
-
     }
     getchar();
     getchar();

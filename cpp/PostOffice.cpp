@@ -210,12 +210,12 @@ void PostOffice::sendMessage() {
     while(true){
         send_mtx.lock(); // lock
         if (!send_queue.empty()) { 
-            // std::cout<<"sendMessage()"<<std::endl;
             packs * p = send_queue.front(); // get a packet from queue
             send_queue.pop(); 
             send_mtx.unlock(); // unlock
             //packet send message
             p->w=transfer(p->weights);
+            std::cout<<"p->w是： "<<p->w<<std::endl;
             const size_t buffer_size = sizeof(Option) + 4 * sizeof(int) + p->w.length()+p->msg.length() + 2;//'\n'
             char* buffer = new char[buffer_size];
             serialize(*p, buffer, buffer_size);//Byte serialization 
@@ -243,7 +243,8 @@ void PostOffice::sendMessage() {
             delete p;
             p = nullptr;
         } else {
-            send_mtx.unlock(); 
+            send_mtx.unlock();
+            // std::cout<<"weikong"<<std::endl; 
         }
     }
 }
@@ -268,6 +269,7 @@ void PostOffice::receiveMessage(){
             printf("poll函数出错！\n");
             return ;
         } else if (ret == 0) {
+            // std::cout<<"recv weikong"<<std::endl; 
             continue;
         } else {
             for (size_t i = 0; i < pollFdVec.size(); i++) {
