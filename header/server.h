@@ -10,8 +10,6 @@
 class server :public nodes{
 private:
     std::vector<float> w;
-
-
 public:
     server(){};
     void init();

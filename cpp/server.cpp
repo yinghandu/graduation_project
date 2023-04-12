@@ -8,7 +8,7 @@ void server::init(){
     //tmp
     w.resize(16);
     for(int i=0;i<w.size();i++){
-        w[i]=10;
+        w[i]=0;
     }
 
     post_office->begin=false;
@@ -30,25 +30,20 @@ void server::maintainWeights(){
     while(true){
         recv_mtx.lock(); // lock
         if (!recv_queue.empty()) { 
-            std::cout<<"recv_queue不为空: "<<std::endl;
+            // std::cout<<"recv_queue不为空: "<<std::endl;
             packs * p = recv_queue.front(); //get a packet from queue
-            std::cout<<"A "<<std::endl;
             recv_queue.pop(); 
-            std::cout<<"b "<<std::endl;
             recv_mtx.unlock(); // unlock
-            std::cout<<"C "<<std::endl;
             if(p->meta==Option::PUSH){
-                std::cout<<"接收到  worker "<<p->send_id<<" 的 PUSH 请求"<<std::endl;
+                // std::cout<<"接收到  worker "<<p->send_id<<" 的 PUSH 请求"<<std::endl;
                 dealWithPush(p->weights);
             }else if(p->meta==Option::PULL){
-                std::cout<<"接收到  worker "<<p->send_id<<" 的 PULL 请求"<<std::endl;
+                // std::cout<<"接收到  worker "<<p->send_id<<" 的 PULL 请求"<<std::endl;
                 dealWithPull(p->send_id);
             }
             p->weights.clear();
             delete p;
             p = nullptr;
-            std::cout<<"D :"<<std::endl;
-
         } else {
             recv_mtx.unlock(); 
         }
@@ -75,11 +70,11 @@ void server::dealWithPush(std::vector<float> & weights){
         w[i]-=weights[i]*datas->alpha;
     }
 
-    std::cout<<"计算后的参数是： "<<std::endl;
-    for(int i=0;i<weights.size();i++){
-        std::cout<<w[i]<<" ";
-    }
-    std::cout<<std::endl;
+    // std::cout<<"计算后的参数是： "<<std::endl;
+    // for(int i=0;i<weights.size();i++){
+    //     std::cout<<w[i]<<" ";
+    // }
+    // std::cout<<std::endl;
 }
 
 void server::dealWithPull(int sendId){

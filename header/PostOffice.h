@@ -38,6 +38,7 @@ public:
     void serverInformConnect(std::string s_id,std::string w_id);//server inform the scheduler it had been connected with worker
     void schedulerSendServerWorker();//inform the servers of the ip and port they have to connect,or inform the workers
     void schedulerConfirmConnection();//inform the servers of the ip and port they have to connect,or inform the workers
+    bool findID(int ids);
 
     std::vector<int> workers;
     std::vector<int> servers;

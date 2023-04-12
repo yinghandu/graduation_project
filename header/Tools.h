@@ -32,6 +32,7 @@
 #include <ctime>
 #include <iomanip>
 #include <cmath>
+#include <chrono>
 #include <fcntl.h>
 
 typedef int SOCKET;//typedef
@@ -46,39 +47,6 @@ enum class Option {
     PUSH,
     PULL
 };
-
-inline std::ostream& operator<<(std::ostream& os, const Option& option) {
-    switch (option) {
-        case Option::EMPTY:
-            os << "EMPTY";
-            break;
-        case Option::SET_ID:
-            os << "SET_ID";
-            break;
-        case Option::CONFIRM_ID:
-            os << "CONFIRM_ID";
-            break;
-        case Option::SERVER_WORKER_CONNECTED:
-            os << "SERVER_WORKER_CONNECTED";
-            break;
-        case Option::CONFIRM_CONNECTED:
-            os << "CONFIRM_CONNECTED";
-            break;
-        case Option::BEGIN:
-            os << "BEGIN";
-            break;
-        case Option::PUSH:
-            os << "PUSH";
-            break;
-        case Option::PULL:
-            os << "PULL";
-            break;
-        default:
-            os << "UNKNOWN";
-            break;
-    }
-    return os;
-}
 
 #pragma pack(push, 1)
 typedef struct Packet {
@@ -118,16 +86,18 @@ inline std::string transfer(std::vector<float> & weights){
 }
 
 inline void serialize(packs& p, char* buffer, size_t buffer_size) {
+    // std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
     size_t offset = 0;
     memcpy(buffer + offset, &p.meta, sizeof(p.meta));
     offset += sizeof(p.meta);
     // std::cout << "send set p.meta " << offset << std::endl;
     memcpy(buffer + offset, &p.send_id, sizeof(p.send_id));
     offset += sizeof(p.send_id);
-    // std::cout << "send set p.send_id " << offset << std::endl;
+    // std::cout << "send set p.send_id " << p.send_id << std::endl;
     memcpy(buffer + offset, &p.recv_id, sizeof(p.recv_id));
     offset += sizeof(p.recv_id);
-    // std::cout << "send set p.recv_id " << offset << std::endl;
+    // std::cout << "send set p.recv_id " << p.recv_id << std::endl;
+    
     // int weights_num = p.weights.size();
     // memcpy(buffer + offset, &weights_num, sizeof(weights_num));
     // offset += sizeof(weights_num);
@@ -136,31 +106,33 @@ inline void serialize(packs& p, char* buffer, size_t buffer_size) {
     //     offset += sizeof(p.weights[i]);
     // }
     // Serialize weights
-    int w_length = p.w.length();
+    int w_length = p.w.length()+1;
     // std::cout << "send w_length " << w_length << std::endl;
     memcpy(buffer + offset, &w_length, sizeof(w_length));
     offset += sizeof(w_length);
     // std::cout << "send set w_length " << offset << std::endl;
-    memcpy(buffer + offset, p.w.c_str(), w_length);
-    offset += w_length;
+    memcpy(buffer + offset, p.w.c_str(), w_length+1);
+    offset += w_length+1;//复制了'\0'
     // std::cout << "send set w " << offset << std::endl;
     int msg_length = p.msg.length();
     memcpy(buffer + offset, &msg_length, sizeof(msg_length));
     offset += sizeof(msg_length);
-    // std::cout << "send set msg_length " << offset << std::endl;
+    // std::cout << "send set msg_length " << msg_length << std::endl;
     // std::cout<<"send msg是: "<<p.msg<<std::endl;
-    memcpy(buffer + offset, p.msg.c_str(), msg_length);
-    offset += msg_length;
+    memcpy(buffer + offset, p.msg.c_str(), msg_length+1);
+    offset += msg_length+1;
     // std::cout << "send set msg " << offset << std::endl;
     memcpy(buffer + offset, &DELIMITER, sizeof(char));
     offset += sizeof(char);
+    buffer[buffer_size]='\0';
     // std::cout << "send set DELIMITER " << offset << std::endl;
-    if (offset != buffer_size-1) {
+    if (offset != buffer_size) {
         std::cerr << "Error: serialized data size mismatch" << std::endl;
     }
-    else{
-        buffer[buffer_size]='\0';
-    }
+    // else{
+    //     std::cout<<"send "<<offset<<" 个"<<std::endl;
+    // }
+    // std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
 }
 
 inline void deserialize(const char* buffer, size_t buffer_size, packs& p) {
@@ -168,10 +140,14 @@ inline void deserialize(const char* buffer, size_t buffer_size, packs& p) {
     size_t offset = 0;
     memcpy(&p.meta, buffer + offset, sizeof(p.meta));
     offset += sizeof(p.meta);
+    // std::cout << "recv set p.meta " << offset << std::endl;
     memcpy(&p.send_id, buffer + offset, sizeof(p.send_id));
     offset += sizeof(p.send_id);
+    // std::cout << "recv set p.send_id " << offset << std::endl;
     memcpy(&p.recv_id, buffer + offset, sizeof(p.recv_id));
     offset += sizeof(p.recv_id);
+    // std::cout << "recv set p.recv_id " << offset << std::endl;
+    // std::cout<<"send_id是 "<<p.send_id<<" recv id 是: "<<p.recv_id<<std::endl;
     // int weights_num = 0;
     // memcpy(&weights_num, buffer + offset, sizeof(weights_num));
     // offset += sizeof(weights_num);
@@ -193,26 +169,30 @@ inline void deserialize(const char* buffer, size_t buffer_size, packs& p) {
     while (iss >> f) {
         p.weights.push_back(f);
     }
-    offset+=w_length;
+    offset+=w_length+1;
     // std::cout << "send set w_length " << offset << std::endl;
     // std::cout<<" w是 ========="<< w_buffer<<std::endl;
     delete[] w_buffer;
     int msg_length = 0;
     memcpy(&msg_length, buffer + offset, sizeof(msg_length));
     offset += sizeof(msg_length);   
+    // std::cout<<"msg length是: "<<msg_length<<std::endl;
     // std::cout << "recv set msg_length  len" << offset << std::endl;
     char* msg_buffer = new char[msg_length + 1];
     memcpy(msg_buffer, buffer + offset, msg_length);
-    msg_buffer[msg_length] = '\0';
-    offset+=msg_length;
+    msg_buffer[msg_length] ='\0';
+    offset+=msg_length+1;
     // std::cout << "recv set msg_length " << offset << std::endl;
     p.msg=msg_buffer;
     delete[] msg_buffer;
-    // if (offset != buffer_size) {
-    //     std::cout<<"offset是： "<<offset<<" buffer_size是 "<<buffer_size<<std::endl;
-    //     std::cout << "Error: deserialized data size mismatch" << std::endl;
+    if (offset != buffer_size) {
+        // std::cout<<"offset是： "<<offset<<" buffer_size是 "<<buffer_size<<std::endl;
+        std::cout << "Error: deserialized data size mismatch" << std::endl;
+    }
+    // else{
+    //     std::cout<<"recv "<<offset<<" 个"<<std::endl;
     // }
-    // std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
+    // std::cout<<"=============================================="<<std::endl;
 }
 
 inline float sigmoid(float x)

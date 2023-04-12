@@ -51,7 +51,7 @@ void Data::loadData() {
     {
         sin.clear();
         sin.str(strLine);//Assign a value to the stream
-        while (std::getline(sin, tmp, ','))
+        while (std::getline(sin, tmp, ' '))
         {
             rowData.push_back(stof(tmp)); //push each data
         }
